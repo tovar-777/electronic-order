@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Электронный бланк заказа</title>
+    <title>ONLINE-ОПТОВИК</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -17,10 +17,12 @@
             background: linear-gradient(180deg, #ffffff 0%, #fbfbfb 100%);
             color: #333333;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+            overflow-y: auto;
             -webkit-font-smoothing: antialiased;
+            -webkit-overflow-scrolling: touch;
         }
         #splash-screen.hidden {
             display: none !important;
@@ -57,12 +59,32 @@
         }
         #splash-screen .splash-glow-1 { top: 10%; left: 20%; background: #d32f2f; }
         #splash-screen .splash-glow-2 { bottom: 20%; right: 15%; background: #ff5252; }
+        /* top-fixed header inside splash */
+        #splash-screen .splash-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+        }
+        #splash-screen .splash-topbar .splash-top-title {
+            font-weight: 900;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
         #splash-screen .splash {
             position: relative;
             z-index: 1;
-            text-align: center;
-            padding: 2rem;
-            max-width: 420px;
+            text-align: left;
+            padding: 1.5rem 20px 3rem 20px;
+            max-width: 1100px;
+            width: calc(100% - 40px);
+            margin: 0 auto 40px auto;
         }
         #splash-screen .logo-icon {
             width: 80px;
@@ -82,15 +104,42 @@
             50% { transform: translateY(-8px); }
         }
         #splash-screen .splash h1 {
-            font-size: clamp(1.25rem, 4vw, 1.5rem);
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            line-height: 1.3;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.85) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+                font-size: clamp(1.5rem, 6vw, 2.25rem);
+                font-weight: 900;
+                letter-spacing: -0.02em;
+                line-height: 1.05;
+                margin-bottom: 0.4rem;
+                background: none;
+                color: var(--primary-color);
+        }
+        /* hero controls (primary CTA + small auth buttons) */
+        #splash-screen .splash-hero-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .splash-secondary {
+            display: flex;
+            gap: 8px;
+        }
+        .splash-secondary-btn {
+            padding: 10px 12px;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            background: transparent;
+            border: 1px solid rgba(0,0,0,0.06);
+            color: #444;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+        }
+        .splash-secondary-btn:hover { transform: translateY(-3px); background: #fff; }
+        @media (max-width: 480px) {
+            #splash-screen .splash h1 { font-size: 1.1rem; }
+            .splash-secondary-btn { padding: 8px 10px; font-size: 0.85rem; }
         }
         #splash-screen .splash .sub {
             font-size: 0.9rem;
@@ -111,8 +160,89 @@
             width: 0;
             background: linear-gradient(90deg, #d32f2f, #ff5252);
             border-radius: 4px;
-            animation: splash-load 1.8s ease-out forwards;
+            animation: none;
+            transition: width 360ms linear;
         }
+        #splash-screen .splash-progress {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 6px;
+            color: #666;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        #splash-screen .splash-percent {
+            font-size: 18px;
+            color: var(--primary-color);
+            font-weight: 800;
+            min-width: 56px;
+            text-align: center;
+        }
+        #splash-screen .splash-count {
+            font-size: 13px;
+            color: #666;
+        }
+        #splash-screen .splash-lists {
+            margin-top: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 980px;
+        }
+        .splash-list-section { display: flex; flex-direction: column; gap: 8px; }
+        .splash-list-section .list-title { font-weight: 700; color: #444; padding-left: 6px; }
+        .splash-list-grid { width: 100%; }
+        .splash-scroll-container {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            padding: 6px 4px;
+            width: 100%;
+            cursor: grab;
+        }
+        .splash-scroll-container:active { cursor: grabbing; }
+        .splash-scroll-container::-webkit-scrollbar { height: 8px; }
+        .splash-scroll-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.04); border-radius: 6px; }
+        .splash-scroll-container::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 6px; }
+        .splash-products-list { display: flex; gap: 12px; align-items: stretch; padding: 6px; }
+        .splash-product-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 8px;
+            width: 160px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            transform: translateY(6px);
+            opacity: 0;
+            transition: transform 260ms ease, opacity 220ms ease;
+        }
+        .splash-product-card.visible { transform: translateY(0); opacity: 1; }
+        .splash-product-card img { width: 100%; height: 120px; object-fit: contain; border-radius: 8px; background: #f8f8f8; }
+        .splash-product-card .name { font-size: 13px; color: #333; text-align: center; }
+        .splash-product-card .meta { font-size: 12px; color: #666; }
+        @media (min-width: 1200px) {
+            .splash-product-card { width: 200px; }
+            .splash-product-card img { height: 140px; }
+        }
+        @media (max-width: 480px) {
+            .splash-lists { gap: 10px; padding: 6px; }
+            .splash-product-card { width: 140px; padding: 6px; }
+            .splash-product-card img { height: 100px; }
+            #splash-screen .splash-percent { font-size: 16px; }
+        }
+        .list-icon { width: 18px; height: 18px; vertical-align: middle; margin-right: 8px; }
+        .list-count { font-weight: 700; color: var(--primary-color); margin-left: 8px; }
+
+        /* hide icons (they fail to load) */
+        #splash-promo-icon, #splash-new-icon { display: none !important; }
+        .splash-product-card .meta { font-size: 12px; color: #666; }
         @keyframes splash-load { to { width: 100%; } }
 
         @keyframes splash-bg-move {
@@ -143,6 +273,15 @@
         #splash-screen .btn-enter:hover {
             transform: translateY(-2px);
             box-shadow: 0 12px 32px rgba(211, 47, 47, 0.45);
+        }
+        #splash-screen .btn-enter:disabled {
+            opacity: 1;
+            transform: none;
+            box-shadow: none;
+            cursor: default;
+            background: #d0d0d0;
+            color: #555;
+            border-color: #c8c8c8;
         }
         #splash-screen .btn-enter:active { transform: translateY(0); }
         #splash-screen .btn-enter svg { width: 20px; height: 20px; transition: transform 0.3s; }
@@ -276,7 +415,12 @@
             position: sticky;
             top: 40px;
             z-index: 99;
+            position: sticky;
+            overflow: visible;
         }
+
+        /* progress bar background that fills left->right as tags scroll */
+        /* progress bar removed (was subgroup-scroll-progress/track) */
         
         .subgroups-filter-scroll {
             overflow-x: auto;
@@ -286,6 +430,8 @@
             display: flex;
             gap: 6px;
             padding: 0 10px;
+            position: relative;
+            z-index: 3; /* above progress background */
         }
         
         .subgroups-filter-scroll::-webkit-scrollbar {
@@ -310,6 +456,12 @@
             height: 22px;
             box-shadow: 0 1px 2px rgba(211, 47, 47, 0.35);
         }
+
+        /* micro-progress removed */
+
+        /* active subgroup button styling left default */
+
+        /* pulse style removed */
         
         .subgroup-filter-btn:hover {
             background-color: #b71c1c;
@@ -658,11 +810,18 @@
             width: 96px;
             flex-shrink: 0;
             position: relative;
-            overflow: hidden;
+            overflow: visible; /* allow badges to appear outside card */
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Highlight ordered products with red border and glow */
+        .product-card.ordered {
+            border: 2px solid rgba(211,47,47,0.95);
+            box-shadow: 0 8px 24px rgba(211,47,47,0.12), 0 2px 8px rgba(0,0,0,0.06);
+            transform: translateY(-2px);
         }
         
         .product-card.expanded {
@@ -798,20 +957,26 @@
         
         .quantity-badge {
             position: absolute;
-            top: 5px;
-            left: 5px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background-color: rgba(211, 47, 47, 0.9);
-            color: white;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: auto;
+            height: auto;
+            border-radius: 6px;
+            background: transparent;
+            color: rgba(211,47,47,0.55); /* менее прозрачный */
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            z-index: 3;
+            font-size: clamp(28px, 10vw, 64px);
+            font-weight: 900;
+            line-height: 1;
+            padding: 4px 6px;
+            z-index: 6;
             display: none;
+            pointer-events: none;
+            -webkit-text-stroke: 2px #FFD54F; /* жёлтая окантовка */
+            text-shadow: 0 2px 6px rgba(0,0,0,0.12), 0 0 6px rgba(255,213,79,0.12);
         }
         
         .quantity-badge.active {
@@ -2289,25 +2454,38 @@
         <div class="splash-grid"></div>
         <div class="splash-glow splash-glow-1"></div>
         <div class="splash-glow splash-glow-2"></div>
+        <div class="splash-topbar">
+            <div class="splash-top-title">ONLINE-ОПТОВИК</div>
+        </div>
         <div class="splash">
-            <div class="logo-wrap">
-                <div class="logo-icon">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-                    </svg>
-                </div>
-                <h1>Электронный бланк заказа</h1>
                 <p class="sub">Быстрое оформление и отправка заказов</p>
-            </div>
+                <div class="splash-hero-controls">
+                    <button type="button" id="splash-enter-btn" class="btn-enter" disabled>
+                        Перейти в приложение
+                    </button>
+                    <div class="splash-secondary">
+                        <button type="button" id="splash-register-btn" class="splash-secondary-btn">Регистрация</button>
+                        <button type="button" id="splash-login-btn" class="splash-secondary-btn">Авторизация</button>
+                    </div>
+                </div>
             <div class="loader-wrap">
-                <div class="loader-bar"></div>
+                <div class="loader-bar" id="splash-loader-bar"></div>
             </div>
-            <button type="button" id="splash-enter-btn" class="btn-enter">
-                Перейти в приложение
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-            </button>
+            <div class="splash-progress">
+                <div class="splash-percent" id="splash-percent">0%</div>
+                <div class="splash-count" id="splash-count">Загружено 0 товаров</div>
+            </div>
+            <div class="splash-lists">
+                <div class="splash-list-section">
+                    <div class="list-title"><img id="splash-promo-icon" class="list-icon" src="" alt="promo"> Акции <span class="list-count" id="splash-promo-count">0</span></div>
+                    <div id="splash-promo-grid" class="splash-list-grid"></div>
+                </div>
+                <div class="splash-list-section">
+                    <div class="list-title"><img id="splash-new-icon" class="list-icon" src="" alt="new"> Новинки <span class="list-count" id="splash-new-count">0</span></div>
+                    <div id="splash-new-grid" class="splash-list-grid"></div>
+                </div>
+            </div>
+            <!-- enter button moved to top -->
         </div>
     </div>
 
@@ -2587,6 +2765,37 @@
     </div>
     </div><!-- /#app-content -->
 
+    <!-- Модальные окна для регистрации/авторизации (UI only) -->
+    <div class="modal register-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 style="margin-bottom:8px; text-align:center;">Регистрация</h3>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+                <input placeholder="Имя" style="padding:8px;border:1px solid #ddd;border-radius:8px;">
+                <input placeholder="Телефон или e-mail" style="padding:8px;border:1px solid #ddd;border-radius:8px;">
+                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px;">
+                    <button class="splash-secondary-btn close-register">Закрыть</button>
+                    <button class="splash-secondary-btn" style="background:var(--primary-color);color:#fff;border:none;">Зарегистрироваться</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal login-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 style="margin-bottom:8px; text-align:center;">Авторизация</h3>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+                <input placeholder="Телефон или e-mail" style="padding:8px;border:1px solid #ddd;border-radius:8px;">
+                <input placeholder="Пароль" type="password" style="padding:8px;border:1px solid #ddd;border-radius:8px;">
+                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px;">
+                    <button class="splash-secondary-btn close-login">Закрыть</button>
+                    <button class="splash-secondary-btn" style="background:var(--primary-color);color:#fff;border:none;">Войти</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Глобальные переменные
         let products = [];
@@ -2597,6 +2806,7 @@
         let searchQuery = "";
         let expandedTags = {};
         let tagSortMode = {}; // режим сортировки по тегам: price | brand
+        // subgroupObserver removed
         const defaultImage = "https://avatars.mds.yandex.net/get-goods_pic/6237136/hate63d296869e8859dc9057fee2a34e27e/square_166";
         
         // URL изображений
@@ -2882,6 +3092,9 @@
             
             const cartItem = cart[product.id];
             const quantity = cartItem ? cartItem.quantity : 0;
+            if (quantity > 0) {
+                card.classList.add('ordered');
+            }
             let highlightedName = product.name;
             
             if (searchQuery) {
@@ -2973,8 +3186,8 @@
                     ${filterIconsPreviewHTML}
                     <div class="product-image-preview">
                         ${imageHTML}
+                        <div class="quantity-badge ${quantity > 0 ? 'active' : ''}">${quantity}</div>
                     </div>
-                    <div class="quantity-badge ${quantity > 0 ? 'active' : ''}">${quantity}</div>
                     <div class="add-to-cart-btn">+</div>
                     <div class="remove-from-cart-btn ${quantity > 0 ? 'active' : ''}">-</div>
                     <div class="product-price-preview">${formatPrice(product.price)} ₽</div>
@@ -3348,7 +3561,8 @@
             
             // Получаем подгруппы для текущей активной группы
             const groupProducts = products.filter(p => p.group === selectedGroup);
-            const subgroups = [...new Set(groupProducts.map(p => p.subgroup).filter(s => s))].sort();
+            const subgroups = Array.from(new Set(groupProducts.map(p => p.subgroup || 'Без подгруппы')))
+                .sort((a, b) => String(a).localeCompare(String(b), 'ru', { sensitivity: 'base' }));
             
             if (subgroups.length === 0) return;
             
@@ -3360,8 +3574,14 @@
                 subgroupsContainer.appendChild(subgroupBtn);
             });
 
-            // Center the active (or first) subgroup button in the scroll tape
+            // If no active button set, mark the first one active so UI has focus
             setTimeout(() => {
+                const anyActive = subgroupsContainer.querySelector('.subgroup-filter-btn.active');
+                if (!anyActive) {
+                    const firstBtn = subgroupsContainer.querySelector('.subgroup-filter-btn');
+                    if (firstBtn) firstBtn.classList.add('active');
+                }
+                // Center the active (or first) subgroup button in the scroll tape
                 centerActiveSubgroup();
             }, 80);
         }
@@ -3381,6 +3601,8 @@
                 container.scrollBy({ left: offset, behavior: 'smooth' });
             }
         }
+
+        // micro-progress logic removed
         
         function toggleGroupFilter(group) {
             selectedGroup = group;
@@ -3693,7 +3915,8 @@
                 groupHeader.textContent = group;
                 groupSection.appendChild(groupHeader);
                 
-                const subgroups = [...new Set(groupProducts.map(p => p.subgroup))];
+                const subgroups = Array.from(new Set(groupProducts.map(p => p.subgroup || 'Без подгруппы')))
+                    .sort((a, b) => String(a).localeCompare(String(b), 'ru', { sensitivity: 'base' }));
                 
                 subgroups.forEach(subgroup => {
                     const subgroupProducts = groupProducts.filter(p => p.subgroup === subgroup);
@@ -3702,7 +3925,8 @@
                     subgroupHeader.textContent = subgroup;
                     groupSection.appendChild(subgroupHeader);
                     
-                    const tags = [...new Set(subgroupProducts.map(p => p.tag))];
+                    const tags = Array.from(new Set(subgroupProducts.map(p => p.tag || 'Без тега')))
+                        .sort((a, b) => String(a).localeCompare(String(b), 'ru', { sensitivity: 'base' }));
                     
                     tags.forEach(tag => {
                         let tagProducts = subgroupProducts.filter(p => p.tag === tag);
@@ -3802,6 +4026,7 @@
                         tagSection.appendChild(productsScrollContainer);
                         groupSection.appendChild(tagSection);
                     });
+                    // after tags/buttons updated
                 });
                 
                 productsContainer.appendChild(groupSection);
@@ -3839,6 +4064,7 @@
             }, 150);
             // ensure wheel handlers bind to newly created lanes
             try{ if (typeof enableWheelForAllLanes === 'function') enableWheelForAllLanes(); }catch(e){ console.warn('enableWheelForAllLanes after render failed', e); }
+            // micro-progress removed; nothing to initialize here
         }
         
         // ===================== ЗАГРУЗКА ДАННЫХ =====================
@@ -3855,6 +4081,7 @@
             let hasMore = true;
             let totalLoaded = 0;
             
+            let totalCount = null;
             while (hasMore) {
                 try {
                     const response = await fetch(
@@ -3875,12 +4102,33 @@
                     const data = await response.json();
                     allProducts = allProducts.concat(data);
                     totalLoaded += data.length;
+                    // try to read total count from Content-Range header (format: items start-end/total)
+                    if (!totalCount) {
+                        try {
+                            const cr = response.headers.get('content-range') || response.headers.get('Content-Range');
+                            if (cr) {
+                                const m = cr.match(/\/(\d+)$/);
+                                if (m) totalCount = parseInt(m[1], 10);
+                            }
+                        } catch (e) { /* ignore */ }
+                    }
+
+                    // update splash progress and counters while loading
+                    try {
+                        const promoCount = allProducts.filter(p => (p.dop || '').toLowerCase().includes('акция') || (p.dop || '').toLowerCase().includes('распродажа')).length;
+                        const newCount = allProducts.filter(p => (p.name || '').includes('🆕') || (p.dop || '').toLowerCase().includes('новин')).length;
+                        const percent = totalCount ? Math.round((totalLoaded / totalCount) * 100) : Math.min(99, Math.round(totalLoaded / Math.max(1, limit) * 10));
+                        updateSplashProgress(percent, totalLoaded, totalCount);
+                        updateSplashCounts(promoCount, newCount);
+                    } catch (e) { console.warn('splash progress update failed', e); }
                     
                     console.log(`Загружено ${totalLoaded} товаров...`);
                     
                     if (data.length < limit) {
                         hasMore = false;
                         console.log(`✅ Все товары загружены! Всего: ${totalLoaded}`);
+                        // final update to 100%
+                        updateSplashProgress(100, totalLoaded, totalCount || totalLoaded);
                     } else {
                         start += limit;
                     }
@@ -3894,6 +4142,115 @@
             }
             
             return allProducts;
+        }
+
+        // ======= SPLASH HELPERS ========
+        function updateSplashProgress(percent, loadedCount, totalCount) {
+            const bar = document.getElementById('splash-loader-bar');
+            const pct = document.getElementById('splash-percent');
+            const count = document.getElementById('splash-count');
+            if (bar) bar.style.width = (percent || 0) + '%';
+            if (pct) pct.textContent = (percent || 0) + '%';
+            if (count) {
+                if (totalCount) count.textContent = `Загружено ${loadedCount} из ${totalCount} товаров`;
+                else count.textContent = `Загружено ${loadedCount} товаров`;
+            }
+        }
+
+        function updateSplashCounts(promoCount, newCount) {
+            const promoEl = document.getElementById('splash-promo-count');
+            const newEl = document.getElementById('splash-new-count');
+            if (promoEl) animateNumberTo(promoEl, promoCount);
+            if (newEl) animateNumberTo(newEl, newCount);
+        }
+
+        function animateNumberTo(el, target) {
+            const start = parseInt(el.textContent || '0', 10) || 0;
+            const duration = 600;
+            const startTime = performance.now();
+            function step(now) {
+                const t = Math.min(1, (now - startTime) / duration);
+                const value = Math.floor(start + (target - start) * t);
+                el.textContent = String(value);
+                if (t < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function renderSplashPreviews(promoProducts, newProducts) {
+            const promoGrid = document.getElementById('splash-promo-grid');
+            const newGrid = document.getElementById('splash-new-grid');
+            if (!promoGrid || !newGrid) return;
+            promoGrid.innerHTML = '';
+            newGrid.innerHTML = '';
+
+            // sorting: by group -> brand -> price
+            const sortFn = (a, b) => {
+                const ga = (a.group || '').toString();
+                const gb = (b.group || '').toString();
+                const g = ga.localeCompare(gb, 'ru', { sensitivity: 'base' });
+                if (g !== 0) return g;
+                const ba = (a.brand || '').toString();
+                const bb = (b.brand || '').toString();
+                const br = ba.localeCompare(bb, 'ru', { sensitivity: 'base' });
+                if (br !== 0) return br;
+                return parseFloat(a.price || 0) - parseFloat(b.price || 0);
+            };
+
+            promoProducts = (promoProducts || []).slice().sort(sortFn);
+            newProducts = (newProducts || []).slice().sort(sortFn);
+
+            const makeCard = (p) => {
+                const div = document.createElement('div');
+                div.className = 'splash-product-card';
+                const img = document.createElement('img');
+                img.src = p.image || defaultImage;
+                img.onerror = () => { img.src = defaultImage; };
+                const name = document.createElement('div');
+                name.className = 'name';
+                name.textContent = p.name || 'Без названия';
+                const meta = document.createElement('div');
+                meta.className = 'meta';
+                meta.textContent = `${p.group || ''} · ${p.brand || ''} · ${parseFloat(p.price || 0).toFixed(1)} ₽`;
+                div.appendChild(img);
+                div.appendChild(name);
+                div.appendChild(meta);
+                return div;
+            };
+
+            // helper to render many cards into a horizontal scroll container
+            function renderList(containerEl, items, delayStart) {
+                const sc = document.createElement('div');
+                sc.className = 'splash-scroll-container';
+                const list = document.createElement('div');
+                list.className = 'splash-products-list';
+                items.forEach((p, i) => {
+                    const card = makeCard(p);
+                    // lazy-load images
+                    const img = card.querySelector('img');
+                    if (img) {
+                        img.loading = 'lazy';
+                        // ensure src is present (some images may be empty)
+                        if (!img.src || img.src.trim() === '') img.src = p.image || '';
+                    }
+                    list.appendChild(card);
+                    setTimeout(() => card.classList.add('visible'), delayStart + i * 40);
+                });
+                sc.appendChild(list);
+                containerEl.appendChild(sc);
+            }
+
+            // render all items (user requested all)
+            renderList(promoGrid, promoProducts, 100);
+            renderList(newGrid, newProducts, 120);
+
+            // update visible counts immediately
+            try {
+                const promoCountEl = document.getElementById('splash-promo-count');
+                const newCountEl = document.getElementById('splash-new-count');
+                if (promoCountEl) promoCountEl.textContent = String(promoProducts.length);
+                if (newCountEl) newCountEl.textContent = String(newProducts.length);
+            } catch (e) { }
         }
         
         // ===================== ОБНОВЛЕНИЕ КОРЗИНЫ =====================
@@ -4059,7 +4416,8 @@
         }
         
         // ===================== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ =====================
-        
+        // (Subgroup progress/observer code removed)
+
         async function initApp() {
             try {
                 const data = await loadAllProducts();
@@ -4092,6 +4450,37 @@
                         unit: safeStr(item.unit)
                     };
                 });
+
+                // After mapping, render promo/new previews into splash (only now, splash still visible)
+                try {
+                    const promoProducts = data.filter(p => (p.dop || '').toLowerCase().includes('акция') || (p.dop || '').toLowerCase().includes('распродажа'));
+                    const newProducts = data.filter(p => (p.name || '').includes('🆕') || (p.dop || '').toLowerCase().includes('новин'));
+                        renderSplashPreviews(promoProducts, newProducts);
+                        try { 
+                            // set icons next to titles from the app's filter images
+                            const promoIcon = document.getElementById('splash-promo-icon');
+                            const newIcon = document.getElementById('splash-new-icon');
+                            if (window.filterImages) {
+                                if (promoIcon) promoIcon.src = filterImages.promo || '';
+                                if (newIcon) newIcon.src = filterImages.new || '';
+                                if (promoIcon && !promoIcon.getAttribute('alt')) promoIcon.alt = 'promo';
+                                if (newIcon && !newIcon.getAttribute('alt')) newIcon.alt = 'new';
+                                // ensure icons lazy loaded as well
+                                if (promoIcon) promoIcon.loading = 'lazy';
+                                if (newIcon) newIcon.loading = 'lazy';
+                            }
+                        } catch(e){console.warn('set splash icons failed', e)}
+                        try { setTimeout(enableWheelForSplashLists, 60); } catch(e) {}
+                } catch (e) { console.warn('renderSplashPreviews failed', e); }
+
+                // enable enter button
+                try {
+                    const enterBtn = document.getElementById('splash-enter-btn');
+                    if (enterBtn) {
+                        enterBtn.disabled = false;
+                        enterBtn.classList.add('ready');
+                    }
+                } catch (e) { }
                 
                 makeProductsSafe();
                 createGroupsFilter();
@@ -4100,6 +4489,7 @@
                 updateFilterButtons();
                 updateFilterCounts();
                 renderProducts();
+                // initialize event handlers after initial render
                 initEventListeners();
                 initOldOrderModalHandlers();
                 initBrandsFilterHandlers();
@@ -4599,6 +4989,32 @@
                 });
             }
             
+            // Обработчики для splash auth buttons (Регистрация / Авторизация)
+            document.addEventListener('click', (e) => {
+                const regBtn = e.target.closest('#splash-register-btn');
+                if (regBtn) {
+                    const modal = document.querySelector('.register-modal');
+                    if (modal) modal.classList.add('active');
+                    return;
+                }
+                const loginBtn = e.target.closest('#splash-login-btn');
+                if (loginBtn) {
+                    const modal = document.querySelector('.login-modal');
+                    if (modal) modal.classList.add('active');
+                    return;
+                }
+                if (e.target.closest('.close-register')) {
+                    const modal = document.querySelector('.register-modal');
+                    if (modal) modal.classList.remove('active');
+                    return;
+                }
+                if (e.target.closest('.close-login')) {
+                    const modal = document.querySelector('.login-modal');
+                    if (modal) modal.classList.remove('active');
+                    return;
+                }
+            });
+
             // Обработчики для кнопки отправки заказа
             document.querySelectorAll('.send-order-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -4834,6 +5250,22 @@
         // map vertical wheel to horizontal for hovered lanes (only when lane overflows)
         function enableWheelForAllLanes(){
             const selectors = ['.products-scroll-container', '.products-list', '.groups-filter-section', '.groups-filter-scroll', '.subgroups-filter-scroll', '.brands-scroll-container', '.brands-filter-scroll'];
+            document.querySelectorAll(selectors.join(',')).forEach(container=>{
+                if(!container) return;
+                if(container.__wheelBound) return;
+                container.__wheelBound = true;
+                container.addEventListener('wheel', function(e){
+                    if(Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+                    if(container.scrollWidth <= container.clientWidth) return;
+                    container.scrollLeft += e.deltaY;
+                    e.preventDefault();
+                }, {passive:false});
+            });
+        }
+
+        // Map vertical wheel to horizontal specifically for splash lists (promo/new)
+        function enableWheelForSplashLists(){
+            const selectors = ['.splash-scroll-container'];
             document.querySelectorAll(selectors.join(',')).forEach(container=>{
                 if(!container) return;
                 if(container.__wheelBound) return;
